@@ -46,13 +46,13 @@ rotate_form_input = """
 <form action="/" method="POST">
     <label>
         <strong>Rotate by:</strong>
-        <input type="text" name="rotatetimes" value="%(rotatetimes)s"/>
+        <input type="text" name="rotatetimes" />
     </label>
     <br /><br />
     <label>
         <strong>Encrpytion:</strong>
         <br />
-        <input type="text" name="encrypttext" size="250" style="height:10em;width:35em;" value="%(encrypttext)s"/>
+        <textarea type="text" name="encrypttext" size="250" style="height:10em;width:35em;" value="%(encrypttext)s"/>{0}</textarea>
     </label>
     <br />
     <input type="submit" value="Submit Query"/>
@@ -64,7 +64,7 @@ class Index(webapp2.RequestHandler):
         e.g. www.caesar.com/
     """
     def write_form(self, rotatetimes="", encrypttext=""):
-        self.response.out.write(rotate_form_input % {"rotatetimes": rotatetimes,
+        self.response.out.write(rotate_form_input.format("") % {"rotatetimes": rotatetimes,
                                                         "encrypttext": encrypttext})
 
     def get(self):
@@ -76,10 +76,10 @@ class Index(webapp2.RequestHandler):
         # look inside the request to figure out what the user typed
         number_rotations = self.request.get('rotatetimes')
         user_raw_inputs = self.request.get('encrypttext')
-        encrypted_item = encrypt(user_raw_inputs, number_rotations)
+        encrypted_item = encrypt(user_raw_inputs, int(number_rotations))
         # combine all the pieces to build the content of our response
         main_content = encrypted_item
-        response = page_header + main_content + page_footer
+        response = page_header + rotate_form_input.format(main_content) + page_footer
         self.response.out.write(response)
 
 
